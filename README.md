@@ -2,7 +2,7 @@
 
 Hotkey-triggered speech-to-text for Windows. Tap the hotkey to start dictating, tap again to stop — the transcription is auto-pasted into the focused window.
 
-![demo](demo.gif)
+<img src="demo.gif" alt="demo" width="720">
 
 Inspired by [whisper-writer](https://github.com/savbell/whisper-writer), but built native for Windows for two reasons:
 

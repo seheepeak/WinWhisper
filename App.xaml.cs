@@ -33,6 +33,7 @@ public partial class App : Application
 
     private WinForms.NotifyIcon? _notifyIcon;
     private System.Drawing.Icon? _defaultIcon;
+    private SettingsWindow? _openSettingsWindow;
 
     // Status window active flag for HotKeyManager to check asynchronously
     public volatile bool IsStatusWindowOpen;
@@ -178,8 +179,21 @@ public partial class App : Application
     {
         _ = Dispatcher.InvokeAsync(() =>
         {
-            var settingsWindow = Host.Services.GetRequiredService<SettingsWindow>();
-            settingsWindow.ShowDialog();
+            if (_openSettingsWindow != null)
+            {
+                _openSettingsWindow.Activate();
+                return;
+            }
+
+            _openSettingsWindow = Host.Services.GetRequiredService<SettingsWindow>();
+            try
+            {
+                _openSettingsWindow.ShowDialog();
+            }
+            finally
+            {
+                _openSettingsWindow = null;
+            }
         });
     }
 
@@ -221,6 +235,14 @@ public partial class App : Application
         contextMenu.Items.Add("Exit", null, ExitMenuItem_Click);
 
         _notifyIcon.ContextMenuStrip = contextMenu;
+
+        _notifyIcon.MouseClick += (s, e) =>
+        {
+            if (e.Button == WinForms.MouseButtons.Left)
+            {
+                ShowSettingsDialog();
+            }
+        };
     }
 
     private void UpdateTrayIcon(bool isHealthy)
