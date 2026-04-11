@@ -1,0 +1,63 @@
+<UserControl x:Class="WinWhisper.Views.Controls.ProgressFill"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:WinWhisper.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="340">
+    
+    <UserControl.Resources>
+        <Storyboard x:Key="StripeAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="StripeTransform"
+                Storyboard.TargetProperty="X"
+                From="0" To="24" 
+                Duration="0:0:1"/>
+        </Storyboard>
+
+        <Storyboard x:Key="FadeAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.5"/>
+        </Storyboard>
+    </UserControl.Resources>
+    
+    <Border CornerRadius="16" Margin="20">
+        <Border.Background>
+            <DrawingBrush Viewport="0,0,24,24" ViewportUnits="Absolute" TileMode="Tile" x:Name="stripeBrush">
+                <DrawingBrush.Drawing>
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,24,24"/>
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" SpreadMethod="Repeat">
+                                <!-- Transparent section -->
+                                <GradientStop Color="Transparent" Offset="0.0"/>
+                                <GradientStop Color="Transparent" Offset="0.1"/>
+                                <!-- First yellow stripe -->
+                                <GradientStop Color="#FEED6C" Offset="0.1"/>
+                                <GradientStop Color="#FEED6C" Offset="0.5"/>
+                                <!-- Transparent gap -->
+                                <GradientStop Color="Transparent" Offset="0.5"/>
+                                <GradientStop Color="Transparent" Offset="0.6"/>
+                                <!-- Second yellow stripe -->
+                                <GradientStop Color="#FEED6C" Offset="0.6"/>
+                                <GradientStop Color="#FEED6C" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                </DrawingBrush.Drawing>
+                <DrawingBrush.Transform>
+                    <TranslateTransform x:Name="StripeTransform" X="0"/>
+                </DrawingBrush.Transform>
+            </DrawingBrush>
+        </Border.Background>
+        
+        <Border.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard Storyboard="{StaticResource StripeAnimation}"/>
+            </EventTrigger>
+        </Border.Triggers>
+    </Border>
+</UserControl>

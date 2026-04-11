@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WinWhisper": {
+      "commandName": "Project",
+      "workingDirectory": "$(TargetDir)"
+    }
+  }
+}

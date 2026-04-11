@@ -1,0 +1,133 @@
+<UserControl x:Class="WinWhisper.Views.Controls.ToggleSwitch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="24" d:DesignWidth="44">
+    <ToggleButton x:Name="InternalToggleButton"
+                  VerticalAlignment="Center"
+                  Width="44"
+                  Height="24"
+                  Checked="InternalToggleButton_Checked"
+                  Unchecked="InternalToggleButton_Unchecked"
+                  Loaded="InternalToggleButton_Loaded">
+        <ToggleButton.Template>
+            <ControlTemplate TargetType="ToggleButton">
+                <Grid>
+                    <!-- Background track -->
+                    <Border x:Name="SwitchBackground"
+                            Width="44"
+                            Height="24"
+                            CornerRadius="12">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <!-- Default OFF state - Gray -->
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="#FFB5B5B5"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <!-- ON state - Blue with animation -->
+                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                    To="#FF0078D4"
+                                                                    Duration="0:0:0.2"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                    To="#FFB5B5B5"
+                                                                    Duration="0:0:0.2"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0"
+                                              BlurRadius="2"
+                                              Color="Black"
+                                              Opacity="0.1"/>
+                        </Border.Effect>
+                    </Border>
+
+                    <!-- Knob -->
+                    <Canvas Width="44" Height="24">
+                        <Ellipse x:Name="SwitchKnob"
+                                 Width="20"
+                                 Height="20"
+                                 Fill="White">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <!-- Default OFF position -->
+                                    <Setter Property="Canvas.Left" Value="2"/>
+                                    <Setter Property="Canvas.Top" Value="2"/>
+                                    <Style.Triggers>
+                                        <!-- ON position with animation -->
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Canvas.Left)"
+                                                                         To="22"
+                                                                         Duration="0:0:0.2">
+                                                            <DoubleAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Canvas.Left)"
+                                                                         To="2"
+                                                                         Duration="0:0:0.2">
+                                                            <DoubleAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                            <Ellipse.Effect>
+                                <DropShadowEffect ShadowDepth="0"
+                                                  BlurRadius="4"
+                                                  Color="Black"
+                                                  Opacity="0.2"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                    </Canvas>
+                </Grid>
+
+                <ControlTemplate.Triggers>
+                    <!-- Mouse Over effect -->
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Cursor" Value="Hand"/>
+                    </Trigger>
+
+                    <!-- Disabled state -->
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5"/>
+                        <Setter Property="Cursor" Value="Arrow"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </ToggleButton.Template>
+    </ToggleButton>
+</UserControl>
