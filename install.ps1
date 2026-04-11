@@ -20,6 +20,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $ProjectRoot  = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectFile  = Join-Path $ProjectRoot 'WinWhisper.csproj'
 $InstallDir   = Join-Path $env:LOCALAPPDATA 'Programs\WinWhisper'
 $ExePath      = Join-Path $InstallDir 'WinWhisper.exe'
 $StartupDir   = [Environment]::GetFolderPath('Startup')
@@ -41,7 +42,7 @@ if (Test-Path $InstallDir) {
 }
 
 Write-Step "Publishing Release build to $InstallDir"
-& dotnet publish $ProjectRoot -c Release -o $InstallDir
+& dotnet publish $ProjectFile -c Release -o $InstallDir
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE"
 }
