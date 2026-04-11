@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-WinWhisper is a Windows-only WPF system tray app that does real-time speech-to-text via Whisper. The user holds a global hotkey (configurable, default `Win+\``), speaks, and the transcribed text is auto-pasted into the foreground window.
+WinWhisper is a Windows-only WPF system tray app that does real-time speech-to-text via Whisper. The user taps a global hotkey (configurable, default `Win+~`) to toggle recording, speaks, and the transcribed text is auto-pasted into the foreground window.
 
 **Tech stack:** .NET 9.0 (WPF + WinForms hybrid), Whisper.net (local) + OpenAI API (cloud), NAudio, WebRtcVadSharp, Microsoft.Windows.CsWin32, Serilog, Microsoft.Extensions.Hosting.
 
@@ -44,9 +44,10 @@ The app uses `Microsoft.Extensions.Hosting`. All registrations live in `App.OnSt
 2. Detect input language from the foreground window's keyboard layout (`GetForegroundWindow` → `GetKeyboardLayout(threadId)` → `LanguageMappings`). Re-detected periodically during recording.
 3. Record 16 kHz mono PCM with `NAudio.WaveInEvent` into a `MemoryStream`.
 4. Run WebRTC VAD on 30 ms frames at `VeryAggressive` mode. Recording-stop trigger depends on `RecordingMode`:
-   - `manual` — stops when hotkey released.
-   - `voice_activity_detection` — stops after N consecutive silent frames.
-   - `continuous` — loops the whole session until hotkey re-pressed.
+   - `press_to_toggle` (default) — runs until the hotkey is pressed again.
+   - `hold_to_record` — runs while the hotkey is held; stops on release.
+   - `voice_activity_detection` — auto-stops after N consecutive silent frames.
+   - `continuous` — loops recording sessions (each session ended by VAD silence) until the hotkey is pressed again.
 5. Send WAV to the provider returned by `TranscriptionProviderFactory.GetProvider()`.
 6. Cache result in `LastTranscriptionStore`, then fire `TranscriptionEvent(TranscribingCompleted, text)`.
 7. `StatusWindow.OnTranscribingCompleted` performs the actual auto-paste — either character-by-character `KeyboardSimulator.TypeUnicode` or `Clipboard.SetText` + simulated `Ctrl+V`, depending on `InputMethod` setting.
@@ -62,8 +63,8 @@ The app uses `Microsoft.Extensions.Hosting`. All registrations live in `App.OnSt
 - **Thread invariant**: `KeyboardHook` installs a low-level hook on its own dedicated `KeyboardHookThread` with a message pump. WH_KEYBOARD_LL callbacks fire on that thread, which means **all `OnPress`/`OnRelease` handlers run single-threaded on the hook thread**. `_pressedKeyStates` is therefore not protected by a lock — don't add cross-thread access.
 - **State machine** per key: `normal` → `chorded` → `suppressed`. When the chord completes, all already-pressed modifier keys are synthetically `Release`d via `KeyboardSimulator` so they don't get stuck in other apps after the chord.
 - **`PreventWinKeyMenu`**: when the chord includes only `Win` (no other modifier), an `LCtrl` press/release is injected to defeat the Start menu popup that fires on Win-key release.
-- **Foreign key rejection**: `HasForeignKeyHeld()` scans VK 0x07–0xFE via `GetAsyncKeyState` at chord-completion time. Skips mouse buttons and `VK_PACKET`. If any key outside the chord is physically held, the chord is rejected. This prevents `Win+\`` from firing when, say, `Shift` is also held (which is semantically `Win+~`, a different intent).
-- **Chord parsing**: `ParseKeyCombination("win+\`")` → `List<HashSet<VIRTUAL_KEY>>`. Outer list is AND-of-slots, each slot is OR-of-keys (e.g. `{LWin, RWin}`). Single-character segments use `VkKeyScan` to map to VK; named modifiers use a small lookup table.
+- **Foreign key rejection**: `HasForeignKeyHeld()` scans VK 0x07–0xFE via `GetAsyncKeyState` at chord-completion time. Skips mouse buttons and `VK_PACKET`. If any key outside the chord is physically held, the chord is rejected. Without this check, holding e.g. `Ctrl` while pressing `Win+~` would still fire the chord, even though the user is clearly mid-shortcut for something else.
+- **Chord parsing**: `ParseKeyCombination("win+~")` → `List<HashSet<VIRTUAL_KEY>>`. Outer list is AND-of-slots, each slot is OR-of-keys (e.g. `{LWin, RWin}`). Single-character segments use `VkKeyScan` to map to VK; named modifiers use a small lookup table. Note: the parser currently discards the shift state returned by `VkKeyScan`, so `"win+~"` and `"win+\`"` parse identically.
 - **LL hook timeout**: Windows unhooks low-level hooks if a callback takes longer than `LowLevelHooksTimeout` (~300 ms). `KeyboardHook.AliveMonitorAsync` injects a `VK_OEM_CLEAR` ping every ~10 s and re-installs the hook via `WM_REINSTALL` if the pong doesn't come back. Subscribers must keep handlers cheap and marshal heavy work to a thread pool.
 
 ### LastTranscriptionStore

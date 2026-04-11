@@ -1,6 +1,6 @@
 # WinWhisper
 
-Push-to-talk speech-to-text for Windows. Hold the hotkey, speak, release — the transcription is auto-pasted into the focused window.
+Hotkey-triggered speech-to-text for Windows. Tap the hotkey to start dictating, tap again to stop — the transcription is auto-pasted into the focused window.
 
 ![demo](demo.gif)
 
@@ -25,14 +25,16 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ## Use
 
-1. Hold the hotkey (default `Win+\``) and speak.
-2. Release to transcribe and auto-paste.
+1. Press the hotkey (default `Win+~`) to start recording, then speak.
+2. Press it again to stop. The transcription is auto-pasted into the focused window.
 3. `Esc` while recording to cancel.
 4. Right-click the tray icon for Settings, "Copy last transcription", or Exit.
 
+Other recording modes (hold-to-record, voice-activity, continuous) are available in `settings.json` under `recording.recordingMode`.
+
 First launch opens Settings — pick a local Whisper model to download or paste an OpenAI API key.
 
-To change the hotkey, edit `recording.activationKey` in `%LocalAppData%\WinWhisper\settings.json` and restart. Examples: `"win+\`"`, `"ctrl+shift+v"`, `"alt+space"`.
+To change the hotkey, edit `recording.activationKey` in `%LocalAppData%\WinWhisper\settings.json` and restart. Examples: `"win+~"`, `"ctrl+shift+v"`, `"alt+space"`.
 
 ## Architecture
 
