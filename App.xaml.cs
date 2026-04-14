@@ -33,6 +33,7 @@ public partial class App : Application
 
     private WinForms.NotifyIcon? _notifyIcon;
     private System.Drawing.Icon? _defaultIcon;
+    private System.Drawing.Icon? _warningIcon;
     private SettingsWindow? _openSettingsWindow;
 
     // Status window active flag for HotKeyManager to check asynchronously
@@ -227,6 +228,12 @@ public partial class App : Application
         }
         _defaultIcon = _notifyIcon.Icon;
 
+        var warningStreamInfo = GetResourceStream(new Uri("pack://application:,,,/Assets/Images/ww-logo-warning.ico"));
+        using (var stream = warningStreamInfo.Stream)
+        {
+            _warningIcon = new System.Drawing.Icon(stream);
+        }
+
         var contextMenu = new WinForms.ContextMenuStrip();
         contextMenu.Items.Add("Copy last transcription", null, CopyLastTranscriptionMenuItem_Click);
         contextMenu.Items.Add("-");
@@ -256,16 +263,7 @@ public partial class App : Application
         }
         else
         {
-            // Create warning overlay
-            using var bitmap = _defaultIcon!.ToBitmap();
-            using (var g = System.Drawing.Graphics.FromImage(bitmap))
-            {
-                var warningIcon = System.Drawing.SystemIcons.Warning;
-                // Draw warning at bottom-right, scaled to 66%
-                var size = bitmap.Width * 2 / 3;
-                g.DrawIcon(warningIcon, new System.Drawing.Rectangle(bitmap.Width - size, bitmap.Height - size, size, size));
-            }
-            _notifyIcon.Icon = System.Drawing.Icon.FromHandle(bitmap.GetHicon());
+            _notifyIcon.Icon = _warningIcon;
             _notifyIcon.Text = "WinWhisper - Reconnecting keyboard hook...";
         }
     }
@@ -299,6 +297,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _notifyIcon?.Dispose();
+        _warningIcon?.Dispose();
 
         if (Host != null)
         {

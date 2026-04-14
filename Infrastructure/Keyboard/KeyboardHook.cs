@@ -279,7 +279,7 @@ public sealed class KeyboardHook : IDisposable
                     continue;
                 }
 
-                if (++pongFailCount > 0)
+                if (++pongFailCount == 1)
                 {
                     OnStatusChanged?.Invoke(false);
                 }
