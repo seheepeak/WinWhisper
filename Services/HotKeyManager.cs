@@ -21,6 +21,7 @@ public sealed class HotKeyManager : IHostedService, IDisposable, IAsyncDisposabl
     public event EventHandler<CancelEventArgs>? OnCancel;
     public event EventHandler<bool>? OnHookStatusChanged;
 
+    private readonly ILogger<HotKeyManager> _logger;
     private readonly KeyboardHook _listener;
 
     private readonly Dictionary<KeyCode, string> _pressedKeyStates = [];
@@ -33,6 +34,7 @@ public sealed class HotKeyManager : IHostedService, IDisposable, IAsyncDisposabl
 
     public HotKeyManager(UserSettings config, ILoggerFactory loggerFactory)
     {
+        _logger = loggerFactory.CreateLogger<HotKeyManager>();
         _listener = new KeyboardHook(loggerFactory.CreateLogger<KeyboardHook>());
         _keyChord = ParseKeyCombination(config.Recording.ActivationKey);
         _vkRelevant = [.. _keyChord.SelectMany(s => s)];
@@ -181,7 +183,8 @@ public sealed class HotKeyManager : IHostedService, IDisposable, IAsyncDisposabl
         var args = new CancelEventArgs();
         foreach (var handler in eventHandler.GetInvocationList().Cast<EventHandler<CancelEventArgs>>())
         {
-            try { handler(this, args); } catch { }
+            try { handler(this, args); }
+            catch (Exception ex) { _logger.LogError(ex, "Hotkey event handler threw"); }
         }
         return !args.Cancel;
     }
