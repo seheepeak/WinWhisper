@@ -121,7 +121,7 @@ public sealed class TranscriptionService : IDisposable, IAsyncDisposable
                     TranscriptionEvent?.Invoke(this, new TranscriptionEventArgs(TranscriptionEventType.TranscribingCompleted, transcription));
                 }
 
-                if (_config.Recording.RecordingMode != "continuous")
+                if (_config.Recording.RecordingMode != RecordingMode.Continuous)
                     return;
             }
         }
@@ -241,7 +241,7 @@ public sealed class TranscriptionService : IDisposable, IAsyncDisposable
                 }
 
                 // Silence detection for VAD and continuous modes
-                if (_config.Recording.RecordingMode is "voice_activity_detection" or "continuous")
+                if (_config.Recording.RecordingMode is RecordingMode.VoiceActivityDetection or RecordingMode.Continuous)
                 {
                     if (hasSpeech)
                     {

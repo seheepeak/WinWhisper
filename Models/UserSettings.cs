@@ -92,14 +92,10 @@ public class UserSettings
         public int MinDuration { get; set; } = 100;
 
         /// <summary>
-        /// Recording mode:
-        /// - "continuous": auto-restart recording after pause in speech until activation key is pressed again
-        /// - "voice_activity_detection": stop recording after pause in speech
-        /// - "press_to_toggle": stop recording when activation key is pressed again (default)
-        /// - "hold_to_record": stop recording when activation key is released
+        /// Recording mode. See <see cref="Models.RecordingMode"/> for available values.
         /// </summary>
         [JsonPropertyName("recordingMode")]
-        public string RecordingMode { get; set; } = "press_to_toggle";
+        public RecordingMode RecordingMode { get; set; } = RecordingMode.PressToToggle;
 
         /// <summary>
         /// Name of the recording device to use (empty string for default device)
@@ -126,12 +122,10 @@ public class UserSettings
         public int WritingKeyPressDelayMs { get; set; } = 5;
 
         /// <summary>
-        /// Input method to use when pasting transcription results
-        /// - "keyboard": simulate keyboard input (default)
-        /// - "paste": use clipboard paste (Ctrl+V)
+        /// Input method used when delivering transcribed text. See <see cref="Models.InputMethod"/>.
         /// </summary>
         [JsonPropertyName("inputMethod")]
-        public string InputMethod { get; set; } = "keyboard";
+        public InputMethod InputMethod { get; set; } = InputMethod.Keyboard;
     }
 
     /// <summary>

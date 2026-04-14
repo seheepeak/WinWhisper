@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinWhisper.Views.Windows"
         xmlns:controls="clr-namespace:WinWhisper.Views.Controls"
+        xmlns:models="clr-namespace:WinWhisper.Models"
         xmlns:ic="clr-namespace:FluentIcons.Wpf;assembly=FluentIcons.Wpf"
         mc:Ignorable="d"
         Title="WinWhisper Settings"
@@ -529,10 +530,10 @@
                                           VerticalAlignment="Center"
                                           Margin="12,0,0,0"
                                           Padding="10,8">
-                                    <ComboBoxItem Content="Press to toggle" Tag="press_to_toggle"/>
-                                    <ComboBoxItem Content="Hold to record" Tag="hold_to_record"/>
-                                    <ComboBoxItem Content="Voice activity detection" Tag="voice_activity_detection"/>
-                                    <ComboBoxItem Content="Continuous" Tag="continuous"/>
+                                    <ComboBoxItem Content="Press to toggle" Tag="{x:Static models:RecordingMode.PressToToggle}"/>
+                                    <ComboBoxItem Content="Hold to record" Tag="{x:Static models:RecordingMode.HoldToRecord}"/>
+                                    <ComboBoxItem Content="Voice activity detection" Tag="{x:Static models:RecordingMode.VoiceActivityDetection}"/>
+                                    <ComboBoxItem Content="Continuous" Tag="{x:Static models:RecordingMode.Continuous}"/>
                                 </ComboBox>
                             </Grid>
                         </Border>
@@ -865,8 +866,8 @@
                                           VerticalAlignment="Center"
                                           Margin="12,0,0,0"
                                           Padding="10,8">
-                                    <ComboBoxItem Content="Simulate Keyboard Input" Tag="keyboard"/>
-                                    <ComboBoxItem Content="Clipboard Paste (Ctrl+V)" Tag="paste"/>
+                                    <ComboBoxItem Content="Simulate Keyboard Input" Tag="{x:Static models:InputMethod.Keyboard}"/>
+                                    <ComboBoxItem Content="Clipboard Paste (Ctrl+V)" Tag="{x:Static models:InputMethod.Paste}"/>
                                 </ComboBox>
                             </Grid>
                         </Border>

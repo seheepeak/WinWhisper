@@ -200,7 +200,7 @@ public partial class StatusWindow : Window
 
     private async Task OnTranscribingCompleted(string transcription)
     {
-        if (_settings.InputMethod == "keyboard")
+        if (_settings.InputMethod == InputMethod.Keyboard)
         {
             foreach (var ch in transcription)
             {
