@@ -312,7 +312,7 @@ public sealed class TranscriptionService : IDisposable, IAsyncDisposable
         AssertMainThread();
         _disposed = true;
 
-        try { await Stop().ConfigureAwait(false); }
+        try { await Stop(true).ConfigureAwait(false); }
         catch (Exception) { }
         _serviceCts.Dispose();
         _recordingCts.Dispose();
