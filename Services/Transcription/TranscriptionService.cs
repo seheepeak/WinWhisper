@@ -168,7 +168,8 @@ public sealed class TranscriptionService : IDisposable, IAsyncDisposable
 
         var frameDurationMs = Const.AudioConstants.VADFrameDurationMs;
         var frameSize = wavFormat.AverageBytesPerSecond * frameDurationMs / 1000;
-        var initialFramesToSkip = (int)(0.15 * wavFormat.SampleRate / frameSize);
+        // 150ms delay before starting VAD to avoid mistaking the sound of key pressing for voice
+        var initialFramesToSkip = 150 / frameDurationMs;
         var silentFramesThresh = _config.Recording.SilenceDuration / frameDurationMs;
         var hasSpeechDetected = false;
         var silentFrameCount = 0;
