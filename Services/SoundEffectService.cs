@@ -11,19 +11,12 @@ namespace WinWhisper.Services;
 
 public sealed class SoundEffectService : IHostedService, IDisposable
 {
-    public static SoundEffectService Instance { get; private set; } = null!;
-
     private MMDevice? _device;
     private IWavePlayer? _output;
     private MixingSampleProvider? _mixer;
     private int _sampleRate;
     private int _channels;
     private readonly ConcurrentDictionary<string, CachedSound> _cache = new();
-
-    public SoundEffectService()
-    {
-        Instance = this;
-    }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

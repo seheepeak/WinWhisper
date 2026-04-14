@@ -38,14 +38,16 @@ public partial class StatusWindow : Window
     private readonly Storyboard _leadingIconAnimation;
     private MouseFollower? _mouseFollower;
     private readonly TranscriptionService _transcriptionService;
+    private readonly SoundEffectService _soundEffectService;
     private readonly UserSettings.PostProcessingSettings _settings;
 
-    public StatusWindow(TranscriptionService transcriptionService, UserSettings config)
+    public StatusWindow(TranscriptionService transcriptionService, SoundEffectService soundEffectService, UserSettings config)
     {
         InitializeComponent();
 
         _transcriptionService = transcriptionService;
         _transcriptionService.TranscriptionEvent += HandleTranscriptionEvent;
+        _soundEffectService = soundEffectService;
         _settings = config.PostProcessing;
 
         _showAnimation = (Storyboard)Resources["ShowAnimation"];
@@ -105,7 +107,7 @@ public partial class StatusWindow : Window
             _mouseFollower.Start(true);
         }
 
-        SoundEffectService.Instance.Play("Speech On", 0.2f);
+        _soundEffectService.Play("Speech On", 0.2f);
 
         // Initially hide ProgressFill
         ProgressFill.Fade(false, true);
@@ -127,7 +129,7 @@ public partial class StatusWindow : Window
         _transcriptionService.TranscriptionEvent -= HandleTranscriptionEvent;
         _transcriptionService.Dispose();
 
-        SoundEffectService.Instance.Play("Speech Off", 0.2f);
+        _soundEffectService.Play("Speech Off", 0.2f);
 
         if (Application.Current is App app)
         {
