@@ -6,6 +6,7 @@ Hotkey-triggered speech-to-text for Windows. Tap the hotkey to start dictating, 
 
 Inspired by [whisper-writer](https://github.com/savbell/whisper-writer), but built native for Windows for two reasons:
 
+- A UI with a bit more personality.
 - Windows' built-in dictation handles Korean poorly — especially when Korean speech is mixed with English loanwords (which is most real-world Korean).
 - Most existing tools can't use the Windows key as part of the activation hotkey. WinWhisper can.
 
