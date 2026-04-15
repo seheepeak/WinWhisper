@@ -148,11 +148,23 @@ public sealed class HotKeyManager : IHostedService, IDisposable, IAsyncDisposabl
 
     private bool HasForeignKeyHeld()
     {
-        // Skip mouse buttons (0x01~0x06) — clicking while hitting a hotkey is normal.
-        // Skip VK_PACKET (0xE7) — it's a synthetic VK for Unicode injection, not a real key.
-        for (int vk = 0x07; vk <= 0xFE; vk++)
+        // Only scan ASCII-printable VKs: digits, letters, and OEM punctuation.
+        // Modifiers and reserved/undefined VKs are excluded.
+        return IsAnyForeignKeyHeld(0x08, 0x09)   // Backspace, Tab
+            || IsAnyForeignKeyHeld(0x0D, 0x0D)   // Enter
+            || IsAnyForeignKeyHeld(0x1B, 0x1B)   // Esc
+            || IsAnyForeignKeyHeld(0x20, 0x2E)   // Space, PgUp/Dn, End/Home, arrows, Ins/Del
+            || IsAnyForeignKeyHeld(0x30, 0x39)   // '0'-'9'
+            || IsAnyForeignKeyHeld(0x41, 0x5A)   // 'A'-'Z'
+            || IsAnyForeignKeyHeld(0x60, 0x87)   // Numpad 0-9, *, +, -, ., /, F1..F24
+            || IsAnyForeignKeyHeld(0xBA, 0xC0)   // OEM_1..OEM_3 ( ;= , - . / ` )
+            || IsAnyForeignKeyHeld(0xDB, 0xDF);  // OEM_4..OEM_8 ( [ \ ] ' misc )
+    }
+
+    private bool IsAnyForeignKeyHeld(int from, int to)
+    {
+        for (int vk = from; vk <= to; vk++)
         {
-            if (vk == (int)VIRTUAL_KEY.VK_PACKET) continue;
             if ((GetAsyncKeyState(vk) & 0x8000) == 0) continue;
             if (_vkRelevant.Contains((VIRTUAL_KEY)vk)) continue;
             return true;
